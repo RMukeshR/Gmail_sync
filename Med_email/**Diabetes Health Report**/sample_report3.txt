@@ -1,0 +1,32 @@
+Asthma Management Report
+Information:
+Name: Mukesh
+Date of Birth: November 5, 1992
+Gender: Female
+Address: 789 Pine Lane, Villagetown, State, Zip Code
+Contact Number: (555) 321-7890
+Medical History:
+Diagnosis: Asthma
+Date of Diagnosis: March 15, 2010
+Family History: No known family history of asthma
+Other Medical Conditions: Allergic rhinitis
+Recent Pulmonary Function Test (PFT) Results:
+Forced Expiratory V olume in 1 second (FEV1):
+FEV1: 80% of predicted (Normal range: >80%)
+Peak Expiratory Flow (PEF):
+PEF: 400 L/min (Personal best: 420 L/min)
+Current Medications:
+Albuterol inhaler (as needed for rescue)
+Fluticasone/Salmeterol inhaler 250/50 mcg, two puffs twice daily
+Recommendations and Follow-up:
+The patient is advised to continue using the prescribed maintenance inhaler regularly and keep the 
+rescue inhaler on hand for acute symptoms. Regular follow-up appointments are scheduled every 
+six months for ongoing assessment and adjustment of the treatment plan if necessary.
+Lifestyle Recommendations:
+Identify and avoid asthma triggers, such as allergens and irritants.
+Have an asthma action plan and educate close contacts about emergency procedures.
+Use the peak flow meter as directed to monitor lung function regularly.
+Additional Notes:
+The patient should report any changes in symptoms, the need for increased rescue inhaler use, or 
+adverse effects to the healthcare team. This report is based on the information available as of [Date 
+of Report]. For personalized medical advice, please consult with your healthcare provider.

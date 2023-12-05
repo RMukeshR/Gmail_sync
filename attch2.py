@@ -7,6 +7,10 @@ from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
 # import html2text
 from pdf2txt import convert_pdf_to_txt
+import os
+import base64
+from googleapiclient.errors import HttpError
+from pymongo import MongoClient
 
 
 credentials_file_path = 'credentials.json'
@@ -34,6 +38,11 @@ medical_keywords = ["health", "medical", "doctor", "prescription", "treatment", 
 
 def download_attachments(service, msg_id, download_dir):
     try:
+        # Initialize MongoDB connection
+        client = MongoClient('mongodb+srv://mukesh:347qkpRJ2kpNrD1O@mydigirecords0.adupo8x.mongodb.net/')  # Update with your MongoDB connection string
+        db = client['Mail_Sync']  # Update with your database name
+        collection = db['attachments']
+        
         message = service.users().messages().get(userId='me', id=msg_id).execute()
         from_address = message['payload']['headers'][0]['value']
         subject = next(header['value'] for header in message['payload']['headers'] if header['name'] == 'Subject')
@@ -68,6 +77,18 @@ def download_attachments(service, msg_id, download_dir):
                             txt_path = os.path.join(email_dir, os.path.splitext(filename)[0] + '.txt')
                             convert_pdf_to_txt(pdf_path, txt_path)
 
+                            # Read the text content and store in MongoDB
+                            with open(txt_path, 'r', encoding='utf-8') as txt_file:
+                                attachment_content = txt_file.read()
+
+                            # Store attachment in MongoDB
+                            attachment_doc = {
+                                'email_subject': subject,
+                                'attachment_filename': filename,
+                                'attachment_content': attachment_content
+                            }
+                            collection.insert_one(attachment_doc)
+
                         # print(f"Attachment downloaded: {filename}")
                         # file.write(f"Attachment: {filename}\n")
 
@@ -81,8 +102,23 @@ def download_attachments(service, msg_id, download_dir):
                         with open(file_path, "wb") as attachment_file:
                             attachment_file.write(file_data)
 
+                            # Read the text content and store in MongoDB
+                            with open(file_path, 'r', encoding='utf-8') as txt_file:
+                                attachment_content = txt_file.read()
+
+                            # Store attachment in MongoDB
+                            attachment_doc = {
+                                'email_subject': subject,
+                                'attachment_filename': filename,
+                                'attachment_content': attachment_content
+                            }
+                            collection.insert_one(attachment_doc)
+
     except HttpError as error:
         print(f"An error occurred: {error}")
+    finally:
+        # Close MongoDB connection
+        client.close()
 
 
 
