@@ -73,7 +73,7 @@ def download_attachments(service, msg_id, download_dir):
                             file_data = base64.urlsafe_b64decode(part['body']['data'].encode('UTF-8'))
 
                             # Create a unique filename or use a default name if the filename is empty
-                            filename = part['filename'] or 'attachment.bin'
+                            filename = part['filename'] or 'attachment.txtL'
                             file_path = os.path.join(email_dir, filename)
 
                             with open(file_path, "wb") as attachment_file:
@@ -96,7 +96,7 @@ def main():
         results = service.users().messages().list(userId='me', labelIds=['INBOX']).execute()
         messages = results.get('messages', [])
 
-        download_dir = 'download_email'
+        download_dir = 'Med_email'
 
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
