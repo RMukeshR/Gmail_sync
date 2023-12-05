@@ -5,6 +5,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
+import html2text
+
 
 credentials_file_path = 'credentials.json'
 
@@ -36,7 +38,7 @@ def download_attachments(service, msg_id, download_dir):
         subject = next(header['value'] for header in message['payload']['headers'] if header['name'] == 'Subject')
         date = next(header['value'] for header in message['payload']['headers'] if header['name'] == 'Date')
 
-        print(f"Downloading attachments for message with ID: {msg_id}")
+        # print(f"Downloading attachments for message with ID: {msg_id}")
 
         if any(keyword in subject.lower() for keyword in medical_keywords):
             email_dir = os.path.join(download_dir, subject)
@@ -44,43 +46,44 @@ def download_attachments(service, msg_id, download_dir):
             if not os.path.exists(email_dir):
                 os.makedirs(email_dir)
 
-            with open(os.path.join(email_dir, "email_info.txt"), "w") as file:
-                file.write(f"Message ID: {msg_id}\n")
-                file.write(f"From: {from_address}\n")
-                file.write(f"Date: {date}\n")
-                file.write(f"Subject: {subject}\n")
-                file.write("Contents:\n")
+            # with open(os.path.join(email_dir, "email_info.txt"), "w") as file:
+            #     file.write(f"Message ID: {msg_id}\n")
+            #     file.write(f"From: {from_address}\n")
+            #     file.write(f"Date: {date}\n")
+            #     file.write(f"Subject: {subject}\n")
+            #     file.write("Contents:\n")
 
-                for part in message['payload']['parts']:
-                    if 'body' in part:
-                        if 'attachmentId' in part['body']:
-                            attachment = service.users().messages().attachments().get(
-                                userId='me', messageId=msg_id, id=part['body']['attachmentId']).execute()
+            for part in message['payload']['parts']:
+                if 'body' in part:
+                    if 'attachmentId' in part['body']:
+                        attachment = service.users().messages().attachments().get(
+                            userId='me', messageId=msg_id, id=part['body']['attachmentId']).execute()
 
-                            file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
+                        file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
 
-                            # Create a unique filename or use a default name if the filename is empty
-                            filename = part['filename'] or 'attachment.bin'
-                            file_path = os.path.join(email_dir, filename)
+                        # Create a unique filename or use a default name if the filename is empty
+                        filename = part['filename'] or 'attachment.bin'
+                        file_path = os.path.join(email_dir, filename)
 
-                            with open(file_path, "wb") as attachment_file:
-                                attachment_file.write(file_data)
+                        with open(file_path, "wb") as attachment_file:
+                            attachment_file.write(file_data)
 
-                            print(f"Attachment downloaded: {filename}")
-                            file.write(f"Attachment: {filename}\n")
+                        # print(f"Attachment downloaded: {filename}")
+                        # file.write(f"Attachment: {filename}\n")
 
-                        elif 'data' in part['body']:
-                            file_data = base64.urlsafe_b64decode(part['body']['data'].encode('UTF-8'))
+                    elif 'data' in part['body']:
+                        file_data = base64.urlsafe_b64decode(part['body']['data'].encode('Latin'))
 
-                            # Create a unique filename or use a default name if the filename is empty
-                            filename = part['filename'] or 'attachment.txtL'
-                            file_path = os.path.join(email_dir, filename)
+                        # Create a unique filename or use a default name if the filename is empty
+                        filename = 'body.txt'
+                        file_path = os.path.join(email_dir, filename)
 
-                            with open(file_path, "wb") as attachment_file:
-                                attachment_file.write(file_data)
+                        with open(file_path, "wb") as attachment_file:
+                            attachment_file.write(file_data)
 
-                            print(f"Attachment downloaded: {filename}")
-                            file.write(f"Attachment: {filename}\n")
+                        # print(f"Attachment downloaded: {filename}")
+                        # file.write(f"Attachment: {filename}\n")
+
 
     except HttpError as error:
         print(f"An error occurred: {error}")
